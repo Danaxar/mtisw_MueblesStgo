@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Muebles Santiago</title>
+</head>
+<body>
+  <h1>Carga de archivos</h1>
+    <div class="container">
+        <form th:action="@{/load}" method="post"enctype="multipart/form-data">
+            <input type="file" class="form-control" name="archivos">
+            <input type="submit" value="Carga">
+        </form>
+    </div>
+</body>
+</html>
