@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingresar autorizaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+<div>
+    <div>
+        <div>
+            <h1 class="text-left">Ingreso de autorizaciones</h1>
+            <div class="card-body">
+                <form th:action="@{/autorizacion/agregar}" th:object="${autorizacion}" method="post">
+                    <div class="form-group">
+                        <label for="rut_just">Rut: </label>
+                        <input id="rut_just" type="text" name="rut_justificativo" th:field="*{rut}">
+                        <br>
+                    </div>
+                    <div>
+                        <label for="fecha_just">Fecha: </label>
+                        <input id="fecha_just" type="date" name="fecha_justificativo" th:field="*{fecha}">
+                    </div>
+                    <br>
+                    <input type="submit" value="Enviar">
+                </form>
+
+            </div>
+            <p>Ingrese el rut SIN puntos y CON guión</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,10 +1,8 @@
 package com.mtisw1.mueblesStgo.entities;
-
 import lombok.Data;
-
 import javax.persistence.*;
-import java.util.Date;
 
+@Entity
 @Table(name = "autorizacion")
 @Data
 public class AutorizacionEntity {
@@ -12,8 +10,7 @@ public class AutorizacionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Integer id;
-
-    private Date fecha;
+    private String fecha;
     private String rut;
 }
 

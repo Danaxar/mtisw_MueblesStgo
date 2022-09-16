@@ -8,7 +8,7 @@ public class MueblesStgoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MueblesStgoApplication.class, args);
-		System.out.println("Aplication initialized correctly");
+		System.out.println("Running.");
 	}
 
 }
