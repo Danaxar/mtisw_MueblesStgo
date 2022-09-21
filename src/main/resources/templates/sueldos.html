@@ -1,10 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Planilla de sueldos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 <body>
+<nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"></a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Cargar ingresos/salidas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/justificativo/formulario">Ingresar justificativos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/autorizacion/formulario">Ingresar autorizaciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/sueldo/planilla">Sueldos</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
+<!--
+<button type="button"  class="btn btn-primary"  th:method="get">
+    <a th:href="/sueldo/planilla"></a>
+    Generar sueldos
+</button>
+-->
+
+<form th:action="@{/sueldo/calcular}" method="get">
+    <input class="btn btn-primary" type="submit" value="Calcular sueldos">
+</form>
+
+<h1>Planilla de sueldos</h1>
+
+<div class="container-sm">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Rut</th>
+            <th>Nombre y Apellido</th>
+            <th>Años de servicio</th>
+            <th>Sueldo fijo mensual</th>
+            <th>Bono Años de servicio</th>
+            <th>Pago horas extras</th>
+            <th>Monto descuentos</th>
+            <th>Sueldo bruto</th>
+            <th>Cotización previsional</th>
+            <th>Cotización Salud</th>
+            <th>Sueldo Final</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sueldo:${sueldos}">
+            <td th:text="${sueldo.id}"></td>
+            <td th:text="${sueldo.rut}"></td>
+            <td th:text="${sueldo.nombreEmpleado}"></td>
+            <td th:text="${sueldo.yearsOfService}"></td>
+            <td th:text="${sueldo.sueldoFijoMensual}"></td>
+            <td th:text="${sueldo.bonoYearsOfService}"></td>
+            <td th:text="${sueldo.pagoHorasExtras}"></td>
+            <td th:text="${sueldo.montoDescuentos}"></td>
+            <td th:text="${sueldo.sueldoBruto}"></td>
+            <td th:text="${sueldo.cotizacionPrevisional}"></td>
+            <td th:text="${sueldo.cotizacionSalud}"></td>
+            <td th:text="${sueldo.sueldoFinal}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

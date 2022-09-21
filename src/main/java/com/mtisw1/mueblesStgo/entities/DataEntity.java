@@ -1,23 +1,25 @@
 package com.mtisw1.mueblesStgo.entities;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "autorizacion")
 @Data
-public class AutorizacionEntity {
+@Table(name = "data")
+@NoArgsConstructor
+@AllArgsConstructor
+public class DataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false)
     private Integer id;
     private String fecha;
+    private String hora;
     private String rut;
 
     public void print(){
-        System.out.println(Integer.toString(this.id) + "   " +
-                fecha + "    " + rut);
+        System.out.println(rut + "   " + fecha + "   " + hora);
     }
 }
-
-
-

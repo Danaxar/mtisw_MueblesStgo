@@ -18,4 +18,13 @@ public class JustificativoService{
     public JustificativoEntity addJustificativo(JustificativoEntity justificativo){
         return justificativoRepository.save(justificativo);
     }
+
+    public boolean existeJustificativo(String fecha, String rut){
+        ArrayList<JustificativoEntity> justificativo = justificativoRepository.findByFechaAndRut(fecha, rut);
+        if(justificativo.size() == 1){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
