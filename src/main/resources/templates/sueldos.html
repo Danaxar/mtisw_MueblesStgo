@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Cargar ingresos/salidas</a>
+                    <a class="nav-link active" aria-current="page" href="/upload/home">Cargar ingresos/salidas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/justificativo/formulario">Ingresar justificativos</a>
@@ -35,19 +35,18 @@
     Generar sueldos
 </button>
 -->
-
-<form th:action="@{/sueldo/calcular}" method="get">
+<br><br>
+<h1 style="text-align: center;">Planilla de sueldos</h1>
+<form th:action="@{/sueldo/calcular}" method="get" style="text-align: center; padding: 7vh;">
     <input class="btn btn-primary" type="submit" value="Calcular sueldos">
 </form>
 
-<h1>Planilla de sueldos</h1>
-
 <div class="container-sm">
-    <table class="table">
+    <table class="table-responsive">
         <thead class="thead-dark">
         <tr>
             <th>ID</th>
-            <th>Rut</th>
+            <th class="rut">Rut</th>
             <th>Nombre y Apellido</th>
             <th>Años de servicio</th>
             <th>Sueldo fijo mensual</th>
@@ -63,7 +62,7 @@
         <tbody>
         <tr th:each="sueldo:${sueldos}">
             <td th:text="${sueldo.id}"></td>
-            <td th:text="${sueldo.rut}"></td>
+            <td class="rut" th:text="${sueldo.rut}"></td>
             <td th:text="${sueldo.nombreEmpleado}"></td>
             <td th:text="${sueldo.yearsOfService}"></td>
             <td th:text="${sueldo.sueldoFijoMensual}"></td>
@@ -79,4 +78,12 @@
     </table>
 </div>
 </body>
+
+<style>
+    .rut{
+        width: 100px;
+        word-wrap: break-word;
+    }
+</style>
+
 </html>

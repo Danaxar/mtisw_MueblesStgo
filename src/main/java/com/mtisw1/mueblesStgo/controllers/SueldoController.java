@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 @Controller
@@ -17,11 +18,12 @@ import java.util.ArrayList;
 public class SueldoController {
     @Autowired
     SueldoService sueldoService;
+    @Autowired
+    DataController dataController;
 
     // Mostrar tabla
     @GetMapping("/planilla")
     public String mostrarPlanilla(Model model){
-        System.out.println("Cargando planilla...");
         ArrayList<Sueldo> sueldos = sueldoService.listarTodos();
         model.addAttribute("sueldos", sueldos);
         return "/sueldos";  // Sueldos.html
@@ -30,7 +32,7 @@ public class SueldoController {
     // Activar calculo de sueldos
     @GetMapping("/calcular")
     public String calcularSueldos(){
-        System.out.println("hola mundo");
+        dataController.leerTxt();
         sueldoService.calcularSueldos();  // Los carga a la base de datos
         return "redirect:/sueldo/planilla";
     }

@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Cargar ingresos/salidas</a>
+                    <a class="nav-link active" aria-current="page" href="/upload/home">Cargar ingresos/salidas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/justificativo/formulario">Ingresar justificativos</a>
@@ -31,24 +31,27 @@
 <div>
     <div>
         <div>
-            <h1 class="text-left">Ingreso de autorizaciones</h1>
+            <br><br>
+            <h1 class="text-left" style="text-align: center;">Ingreso de autorizaciones</h1>
             <div class="card-body">
-                <form th:action="@{/autorizacion/agregar}" th:object="${autorizacion}" method="post">
-                    <div class="form-group">
+                <form th:action="@{/autorizacion/agregar}" th:object="${autorizacion}"
+                      method="post" style="text-align: center">
+                    <div class="form-group" style="padding: 3vh;">
                         <label for="rut_just">Rut: </label>
-                        <input id="rut_just" type="text" name="rut_justificativo" th:field="*{rut}">
+                        <input id="rut_just" type="text" name="rut_justificativo" th:field="*{rut}" style="border-radius: 5px;">
                         <br>
                     </div>
                     <div>
                         <label for="fecha_just">Fecha: </label>
-                        <input id="fecha_just" type="date" name="fecha_justificativo" th:field="*{fecha}">
+                        <input id="fecha_just" type="date" name="fecha_justificativo" th:field="*{fecha}" style="border-radius: 5px;">
                     </div>
                     <br>
-                    <input type="submit" value="Enviar">
+                    <input type="submit" value="Enviar" class="btn btn-success">
                 </form>
 
             </div>
-            <p>Ingrese el rut SIN puntos y CON guión</p>
+            <br><br><br>
+            <p style="text-align: center">Ingrese el rut CON puntos y CON guión</p>
         </div>
     </div>
 </div>

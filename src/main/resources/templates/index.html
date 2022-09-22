@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Cargar ingresos/salidas</a>
+                    <a class="nav-link active" aria-current="page" href="/upload/home">Cargar ingresos/salidas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/justificativo/formulario">Ingresar justificativos</a>
@@ -33,11 +33,16 @@
 
 
 <div class="container-sm">
+    <br><br>
     <h1>Carga de archivos</h1>
     <div class="container">
         <form th:action="@{/upload/load}" method="post" enctype="multipart/form-data">
+            <div style="padding: 2vh">
             <input type="file" class="form-control" name="archivos">
-            <input type="submit" value="Carga">
+            </div>
+            <div style="padding: 2vh">
+            <input type="submit" value="Carga" class="btn btn-success">
+            </div>
         </form>
     </div>
 

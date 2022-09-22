@@ -21,6 +21,11 @@ public class UploadController {
         return "Upload";
     }
 
+    @GetMapping("/home")
+    public String firstPage(){
+        return "index"; // index.html
+    }
+
     @PostMapping("/load")
     public String load(@RequestParam("archivos")MultipartFile file, RedirectAttributes ms){
         upload.save(file);
