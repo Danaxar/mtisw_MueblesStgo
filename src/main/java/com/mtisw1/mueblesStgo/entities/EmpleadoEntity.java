@@ -1,10 +1,15 @@
 package com.mtisw1.mueblesStgo.entities;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Date;
 @Entity
 @Table(name = "empleado")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmpleadoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,4 +22,13 @@ public class EmpleadoEntity {
     private String fecha_nac;
     private Integer categoria;
     private String fecha_in;
+
+    public EmpleadoEntity(String rut, String apellidos, String nombres, String fecha_nac, Integer categoria, String fecha_in) {
+        this.rut = rut;
+        this.apellidos = apellidos;
+        this.nombres = nombres;
+        this.fecha_nac = fecha_nac;
+        this.categoria = categoria;
+        this.fecha_in = fecha_in;
+    }
 }

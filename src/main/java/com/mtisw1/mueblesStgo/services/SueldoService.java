@@ -1,5 +1,6 @@
 package com.mtisw1.mueblesStgo.services;
 
+import com.mtisw1.mueblesStgo.controllers.MainController;
 import com.mtisw1.mueblesStgo.entities.CategoriaEntity;
 import com.mtisw1.mueblesStgo.entities.DataEntity;
 import com.mtisw1.mueblesStgo.entities.EmpleadoEntity;
@@ -7,6 +8,7 @@ import com.mtisw1.mueblesStgo.entities.Sueldo;
 import com.mtisw1.mueblesStgo.repositories.SueldoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.lang.Integer;
 
@@ -28,22 +30,25 @@ public class SueldoService {
     @Autowired
     AutorizacionService autorizacionService;
 
+    @Autowired
+    MainService mainService;
+
     // Métodos
-    public ArrayList<Sueldo> listarTodos(){  // Cuando los sueldos estén calculados se muestran con esto
+    public ArrayList<Sueldo> listarTodos() {  // Cuando los sueldos estén calculados se muestran con esto
         return (ArrayList<Sueldo>) sueldoRepository.findAll();
     }
 
-    public Sueldo crearSueldo(EmpleadoEntity empleadoActual){
+    public Sueldo crearSueldo(EmpleadoEntity empleadoActual) {
         Sueldo sueldo = new Sueldo();
         sueldo.setRut(empleadoActual.getRut());
         sueldo.setNombreEmpleado(empleadoActual.getApellidos() + " " + empleadoActual.getNombres());
         sueldo.setYearsOfService(CalculosService.calcularYearsOfService(
-                        CalculosService.fecha_actual_str,
-                        empleadoActual.getFecha_in()));
+                CalculosService.fecha_actual_str,
+                empleadoActual.getFecha_in()));
         sueldo.setSueldoFijoMensual(CategoriaEntity.sueldoXcategoria(empleadoActual.getCategoria()));
         sueldo.setBonoYearsOfService(
                 this.calcularBonoYearsOfService(empleadoActual)
-                * sueldo.getSueldoFijoMensual()
+                        * sueldo.getSueldoFijoMensual()
         );
         sueldo.setPagoHorasExtras(0.0);
         sueldo.setMontoDescuentos(0.0);
@@ -53,34 +58,34 @@ public class SueldoService {
         return sueldo;
     }
 
-    public double calcularBonoYearsOfService(EmpleadoEntity empleado){
+    public double calcularBonoYearsOfService(EmpleadoEntity empleado) {
         int years = CalculosService.calcularYearsOfService(CalculosService.fecha_actual_str, empleado.getFecha_in());
-        if(years < 5){
+        if (years < 5) {
             return 0.0;
-        }else if(years >= 5 && years < 10){
+        } else if (years >= 5 && years < 10) {
             return 0.05;
-        }else if(years >= 10 && years < 15){
+        } else if (years >= 10 && years < 15) {
             return 0.08;
-        }else if(years >= 15 && years < 20){
+        } else if (years >= 15 && years < 20) {
             return 0.11;
-        }else if(years >= 20 && years < 25){
+        } else if (years >= 20 && years < 25) {
             return 0.14;
-        }else if(years >= 25){
+        } else if (years >= 25) {
             return 0.17;
         }
         System.out.println("Error calculando years of service");
         return -1;
     }
 
+    /*
     public void calcularSueldos() {
-        // Se deben guardar en la base de datos
+        mainService.agregarEmpleadosPorDefecto();
         System.out.println("Calculando sueldos...");
-        ArrayList<EmpleadoEntity> empleados = empleadoService.obtenerEmpleados();  // Obtener los empleados
+        ArrayList<EmpleadoEntity> empleados = empleadoService.obtenerEmpleados();
         for (int i = 0; i < empleados.size(); i++) {  // Recorrer los empleados
-            EmpleadoEntity empleadoActual = empleados.get(i);  // Obtener empleado i
-            ArrayList<DataEntity> ingresos = dataService.leerBdByRut(empleadoActual.getRut());  // Obtener ingresos
-            System.out.println("Registros de " + empleadoActual.getNombres() + " = " + Integer.toString(ingresos.size()));
-            // It works
+            EmpleadoEntity empleadoActual = empleados.get(i);
+            ArrayList<DataEntity> ingresos = dataService.leerBdByRut(empleadoActual.getRut());
+            //System.out.println("Registros de " + empleadoActual.getNombres() + " = " + Integer.toString(ingresos.size()));
             Sueldo sueldo = crearSueldo(empleadoActual);  // Crear entidad sueldo (planilla)
 
             // Asistencias y Atrasos
@@ -96,7 +101,7 @@ public class SueldoService {
                         // Si no tiene justificativo entonces se descuenta el 15% de su sueldo
                         agregarDescuento(sueldo, CalculosService.descuentoXinasistencia);
                     }
-                }else{  // Si asistió a trabajar -> Verificar atraso
+                } else {  // Si asistió a trabajar -> Verificar atraso
                     procesarHoraLlegada(empleadoActual, fechaActual, CalculosService.horaEntrada, sueldo);
                 }
                 fechaDeTrabajo[2]++;  // Ir al día siguiente
@@ -120,13 +125,13 @@ public class SueldoService {
                         double pago = CategoriaEntity.horaExtraXcategoria(empleadoActual.getCategoria());
                         // Calculo el pago
                         sueldo.setPagoHorasExtras(montoHorasExtrasActual + pago);
-                    }else{
+                    } else {
                         System.out.println("\t pero no cuenta con autorizacion");
                     }
                 }
                 fechaDeHoraExtra[2]++;  // Aumentar un día
             }
-            /* // Atrasos
+             // Atrasos
             System.out.println("Revisando atrasos...");
             Integer[] fechaDeAtraso = CalculosService.copiarArray(CalculosService.fecha_actual_int);
             fechaDeAtraso[1] = fechaDeAtraso[1] - 1;  // Retroceder un mes
@@ -134,15 +139,54 @@ public class SueldoService {
                 String fechaActual = CalculosService.ArrayToFecha(fechaDeAtraso);  // Convertir a string la fecha
                 procesarHoraLlegada(empleadoActual, fechaActual, "08:00", sueldo);
                 fechaDeAtraso[2]++;  // Aumentar un día
-            }*/
+            }
+            /*
+            sueldoBruto(sueldo); // Calcular sueldo bruto
+            sueldoFinal(sueldo); // Calcular sueldo final
+            sueldoRepository.save(sueldo); // Guardar en la base de datos
+
+
+        }
+
+        mainService.sueldosCalculados = true;
+        System.out.println("Sueldos calculados exitosamente");
+    }*/
+
+    public void calcularSueldos() {
+        mainService.agregarEmpleadosPorDefecto();
+        System.out.println("Calculando sueldos...");
+        ArrayList<EmpleadoEntity> empleados = empleadoService.obtenerEmpleados();
+        for (int i = 0; i < empleados.size(); i++) {  // Recorrer los empleados
+            EmpleadoEntity empleadoActual = empleados.get(i);
+            ArrayList<DataEntity> ingresos = dataService.leerBdByRut(empleadoActual.getRut());
+            //System.out.println("Registros de " + empleadoActual.getNombres() + " = " + Integer.toString(ingresos.size()));
+            Sueldo sueldo = crearSueldo(empleadoActual);  // Crear entidad sueldo (planilla)
+            // Asistencias y Atrasos
+            Integer[] fechaDeTrabajo = CalculosService.copiarArray(CalculosService.fecha_actual_int);
+            fechaDeTrabajo[1]--;  // Retroceder un mes = {2022, 8, 1};
+            for (int j = 0; j < 30; j++) {  // Recorrer días del mes
+                String fechaActual = CalculosService.ArrayToFecha(fechaDeTrabajo);
+                if (!dataService.asistioEmpleadoDia(empleadoActual.getRut(), fechaActual)) {  // Fue a trabajar?
+                    // Si no fue a trabajar verificar si tiene justificativo
+                    if (!justificativoService.existeJustificativo(fechaActual, empleadoActual.getRut())){
+                        // Justificativo?
+                        agregarDescuento(sueldo, CalculosService.descuentoXinasistencia);  // -15%
+                    }
+                } else { // Asistió a trabajar
+                    procesarHoraLlegada(empleadoActual, fechaActual, CalculosService.horaEntrada, sueldo);
+                    procesarHoraSalida(empleadoActual, fechaActual, CalculosService.horaSalida, sueldo);
+                }
+                fechaDeTrabajo[2]++;  // Ir al día siguiente
+            }
             sueldoBruto(sueldo); // Calcular sueldo bruto
             sueldoFinal(sueldo); // Calcular sueldo final
             sueldoRepository.save(sueldo); // Guardar en la base de datos
         }
+        mainService.sueldosCalculados = true;
         System.out.println("Sueldos calculados exitosamente");
     }
 
-    public void sueldoBruto(Sueldo sueldo){
+    public void sueldoBruto(Sueldo sueldo) {
         // Sueldo base - descuentos por atraso/falta + bonoYearsOfService + horas extras
         Integer sueldoBase = sueldo.getSueldoFijoMensual();
         double descuentos = sueldo.getMontoDescuentos();
@@ -152,7 +196,7 @@ public class SueldoService {
         sueldo.setSueldoBruto(sueldoBruto);
     }
 
-    public void sueldoFinal(Sueldo sueldo){
+    public void sueldoFinal(Sueldo sueldo) {
         // Sueldo bruto - cotizaciones
         double sueldoBruto = sueldo.getSueldoBruto();
         double cotizacionPrevisional = sueldoBruto * CalculosService.cotizacionPrevisional;
@@ -162,31 +206,52 @@ public class SueldoService {
         sueldo.setCotizacionSalud(cotizacionSalud);
 
         Double sueldoFinal = sueldoBruto - (cotizacionPrevisional + cotizacionSalud);
-        sueldo.setSueldoFinal(sueldoFinal.intValue());
-    }
-
-    public void procesarHoraLlegada(EmpleadoEntity empleado, String fecha, String hora_programada, Sueldo sueldo){
-        // Aplica un descuento de ser necesario a un empleado a un día específico según una hora programada al objeto sueldo
-        String rutConsultar = empleado.getRut();
-        ArrayList<DataEntity> obj = (ArrayList<DataEntity>) dataService.leerBdByRutAndFecha(empleado.getRut(), fecha);  // No está encontrando la ocurrencia correcta
-        DataEntity registro = obj.get(0); // Obtener el primer ingreso, el de la mañana
-        int minutosAtraso = CalculosService.tiempoDiffToMinutos(registro.getHora(), hora_programada);
-        if(minutosAtraso > 70){
-            // Se considera inasistencia -> Descontar a no ser que tenga justificativo
-            if(!justificativoService.existeJustificativo(fecha, empleado.getRut())){
-                // Descontar ya que no tiene justificativo -15%
-                agregarDescuento(sueldo, CalculosService.descuentoXinasistencia);
-            }
-        }else if(minutosAtraso > 45){ // - 6%
-            agregarDescuento(sueldo, 0.06);
-        }else if(minutosAtraso > 25){ // - 3%
-            agregarDescuento(sueldo, 0.03);
-        }else if(minutosAtraso > 10){ // - 1%
-            agregarDescuento(sueldo, 0.01);
+        if(sueldoFinal < 0.0){
+            sueldo.setSueldoFinal(0);
+        }else{
+            sueldo.setSueldoFinal(sueldoFinal.intValue());
         }
     }
 
-    public void agregarDescuento(Sueldo sueldo, double porcentaje){
+    public void procesarHoraLlegada(EmpleadoEntity empleado, String fecha, String hora_programada, Sueldo sueldo) {
+        // Aplica un descuento a un empleado a un día específico según una hora programada al objeto sueldo
+        String rutConsultar = empleado.getRut();
+        ArrayList<DataEntity> obj = (ArrayList<DataEntity>) dataService.leerBdByRutAndFecha(rutConsultar, fecha);
+        DataEntity registro = obj.get(0); // Obtener el primer ingreso, el de la mañana
+        int minutosAtraso = CalculosService.tiempoDiffToMinutos(registro.getHora(), hora_programada);
+        if(minutosAtraso > 10 && minutosAtraso < 25){
+            /// Descontar 1%
+            agregarDescuento(sueldo, 0.01);
+        }else if(minutosAtraso >= 25 && minutosAtraso < 45){
+            // Descontar 3%
+            agregarDescuento(sueldo, 0.03);
+        }else if(minutosAtraso >= 45 && minutosAtraso < 70){
+            // Descontar 6%
+            agregarDescuento(sueldo, 0.06);
+        }else if(minutosAtraso >= 70){ // Se considera inasistencia
+            // Descontar 15% a no ser que se tenga el justificativo
+            if (!justificativoService.existeJustificativo(fecha, empleado.getRut())) {
+                agregarDescuento(sueldo, CalculosService.descuentoXinasistencia);
+            }
+        }
+    }
+
+    public void procesarHoraSalida(EmpleadoEntity empleado, String fecha, String hora_programada, Sueldo sueldo){
+        // Aplica un descuento a un empleado a un día específico según una hora programada al objeto sueldo
+        String rutConsultar = empleado.getRut();
+        ArrayList<DataEntity> obj = (ArrayList<DataEntity>) dataService.leerBdByRutAndFecha(rutConsultar, fecha);
+        DataEntity registro = obj.get(1); // Obtener el segundo ingreso, el de la tarde
+        int minutosExtras = CalculosService.tiempoDiffToMinutos(registro.getHora(), hora_programada);
+        if(minutosExtras >= 60){
+            if(autorizacionService.existeAutorizacion(fecha, empleado)){ // Agregar pago
+                double montoHorasExtrasActual = sueldo.getPagoHorasExtras();  // monto acumulado
+                double pago = CategoriaEntity.horaExtraXcategoria(empleado.getCategoria()) * (minutosExtras / 60);
+                sueldo.setPagoHorasExtras(montoHorasExtrasActual + pago);
+            }
+        }
+    }
+
+    public void agregarDescuento(Sueldo sueldo, double porcentaje) {
         double montoDescuentoActual = sueldo.getMontoDescuentos();  // Obtener la cantidad actual
         double descuento = porcentaje * sueldo.getSueldoFijoMensual();
         sueldo.setMontoDescuentos(montoDescuentoActual + descuento);

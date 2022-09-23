@@ -14,6 +14,7 @@ public class CalculosService {
     static double descuentoXinasistencia = 0.15;
 
     static String horaEntrada = "08:00";
+    static String horaSalida = "18:00";
 
 
     public static Integer[] fechaToArray(String fecha){
