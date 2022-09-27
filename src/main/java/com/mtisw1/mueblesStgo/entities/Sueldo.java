@@ -23,12 +23,12 @@ public class Sueldo {
     private String nombreEmpleado;
     private Integer yearsOfService;
     private Integer sueldoFijoMensual; // sueldo base
-    private double bonoYearsOfService;  // Listo
+    private double bonoYearsOfService;
     // Desde aqui hacia abajo requiere de calculos en la capa servicio
 
     // Analizar
     private double pagoHorasExtras;
-    private double montoDescuentos;  // Se necesita
+    private double montoDescuentos;
 
     private double sueldoBruto; // sueldo base + bonificaciones
     private double cotizacionPrevisional;

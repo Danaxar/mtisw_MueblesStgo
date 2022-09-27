@@ -58,19 +58,4 @@ public class DataService {
         }
         return false;
     }
-
-    public boolean hizoHorasExtra(EmpleadoEntity empleado, String fecha){
-        ArrayList<DataEntity> obj = (ArrayList<DataEntity>) dataRepository.findDataEntitiesByRutAndFecha(empleado.getRut(), fecha);
-        String hora1 = obj.get(0).getHora();
-        String hora2 = obj.get(1).getHora();
-        // 18:00 - 08:00 = 10 hrs = 10 * 60 minutos = 600 minutos
-        int tiempoDiff = CalculosService.tiempoDiffToMinutos(hora2, hora1);  // Aqui está el error
-        if(tiempoDiff > 600){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-
 }

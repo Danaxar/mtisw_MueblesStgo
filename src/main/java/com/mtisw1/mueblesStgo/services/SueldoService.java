@@ -153,23 +153,21 @@ public class SueldoService {
     }*/
 
     public void calcularSueldos() {
+        // Se debería borrar las tuplas existentes de sueldos
+        borrarTodosSueldos();
         mainService.agregarEmpleadosPorDefecto();
         System.out.println("Calculando sueldos...");
         ArrayList<EmpleadoEntity> empleados = empleadoService.obtenerEmpleados();
-        for (int i = 0; i < empleados.size(); i++) {  // Recorrer los empleados
+        for(int i = 0; i < empleados.size(); i++) {  // Recorrer los empleados
             EmpleadoEntity empleadoActual = empleados.get(i);
-            ArrayList<DataEntity> ingresos = dataService.leerBdByRut(empleadoActual.getRut());
-            //System.out.println("Registros de " + empleadoActual.getNombres() + " = " + Integer.toString(ingresos.size()));
-            Sueldo sueldo = crearSueldo(empleadoActual);  // Crear entidad sueldo (planilla)
-            // Asistencias y Atrasos
+            Sueldo sueldo = crearSueldo(empleadoActual);
             Integer[] fechaDeTrabajo = CalculosService.copiarArray(CalculosService.fecha_actual_int);
             fechaDeTrabajo[1]--;  // Retroceder un mes = {2022, 8, 1};
-            for (int j = 0; j < 30; j++) {  // Recorrer días del mes
+            for (int j = 0; j < 30; j++) {  // Recorrer días del mes: Descuentos y Horas Extras
                 String fechaActual = CalculosService.ArrayToFecha(fechaDeTrabajo);
                 if (!dataService.asistioEmpleadoDia(empleadoActual.getRut(), fechaActual)) {  // Fue a trabajar?
-                    // Si no fue a trabajar verificar si tiene justificativo
+                    // Tiene justificativo?
                     if (!justificativoService.existeJustificativo(fechaActual, empleadoActual.getRut())){
-                        // Justificativo?
                         agregarDescuento(sueldo, CalculosService.descuentoXinasistencia);  // -15%
                     }
                 } else { // Asistió a trabajar
@@ -178,12 +176,11 @@ public class SueldoService {
                 }
                 fechaDeTrabajo[2]++;  // Ir al día siguiente
             }
-            sueldoBruto(sueldo); // Calcular sueldo bruto
-            sueldoFinal(sueldo); // Calcular sueldo final
-            sueldoRepository.save(sueldo); // Guardar en la base de datos
+            sueldoBruto(sueldo);
+            sueldoFinal(sueldo);
+            sueldoRepository.save(sueldo);
         }
-        mainService.sueldosCalculados = true;
-        System.out.println("Sueldos calculados exitosamente");
+        System.out.println("Sueldos calculados exitosamente.");
     }
 
     public void sueldoBruto(Sueldo sueldo) {
@@ -220,16 +217,12 @@ public class SueldoService {
         DataEntity registro = obj.get(0); // Obtener el primer ingreso, el de la mañana
         int minutosAtraso = CalculosService.tiempoDiffToMinutos(registro.getHora(), hora_programada);
         if(minutosAtraso > 10 && minutosAtraso < 25){
-            /// Descontar 1%
             agregarDescuento(sueldo, 0.01);
         }else if(minutosAtraso >= 25 && minutosAtraso < 45){
-            // Descontar 3%
             agregarDescuento(sueldo, 0.03);
         }else if(minutosAtraso >= 45 && minutosAtraso < 70){
-            // Descontar 6%
             agregarDescuento(sueldo, 0.06);
         }else if(minutosAtraso >= 70){ // Se considera inasistencia
-            // Descontar 15% a no ser que se tenga el justificativo
             if (!justificativoService.existeJustificativo(fecha, empleado.getRut())) {
                 agregarDescuento(sueldo, CalculosService.descuentoXinasistencia);
             }
@@ -255,5 +248,10 @@ public class SueldoService {
         double montoDescuentoActual = sueldo.getMontoDescuentos();  // Obtener la cantidad actual
         double descuento = porcentaje * sueldo.getSueldoFijoMensual();
         sueldo.setMontoDescuentos(montoDescuentoActual + descuento);
+    }
+
+    public void borrarTodosSueldos(){
+        System.out.println("Borrando registros de tabla sueldos...");
+        sueldoRepository.deleteAll();
     }
 }
