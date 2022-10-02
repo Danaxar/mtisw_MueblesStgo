@@ -1,13 +1,11 @@
 package com.mtisw1.mueblesStgo.controllers;
 
-import com.mtisw1.mueblesStgo.entities.EmpleadoEntity;
 import com.mtisw1.mueblesStgo.entities.JustificativoEntity;
 import com.mtisw1.mueblesStgo.services.JustificativoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 
@@ -29,7 +27,7 @@ public class JustificativoController {
     public String mostrarForm(Model model){
         JustificativoEntity justificativo = new JustificativoEntity();
         model.addAttribute("justificativo", justificativo);
-        return "/justificativos";
+        return "justificativos";
     }
 
     @PostMapping(value = "/agregar")

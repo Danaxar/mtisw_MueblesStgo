@@ -26,7 +26,7 @@ public class SueldoController {
     public String mostrarPlanilla(Model model){
         ArrayList<Sueldo> sueldos = sueldoService.listarTodos();
         model.addAttribute("sueldos", sueldos);
-        return "/sueldos";  // Sueldos.html
+        return "sueldos";  // Sueldos.html
     }
 
     // Activar calculo de sueldos

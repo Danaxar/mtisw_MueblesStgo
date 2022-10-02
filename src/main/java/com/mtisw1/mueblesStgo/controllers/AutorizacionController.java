@@ -22,7 +22,7 @@ public class AutorizacionController {
     public String mostrarForm(Model model){
         AutorizacionEntity autorizacion = new AutorizacionEntity();
         model.addAttribute("autorizacion", autorizacion);
-        return "/autorizaciones";
+        return "autorizaciones";
     }
 
     @PostMapping(value = "/agregar")
