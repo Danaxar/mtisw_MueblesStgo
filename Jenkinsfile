@@ -1,25 +1,37 @@
 pipeline {
     agent any
+    tools{
+        maven 'maven3.8.6'
+    }
     stages {
-        stage('Build') {
+        stage('Build JAR file') {
             steps {
-                sh "./mvnw install -DskiptTest"
-                sh "docker build -t danaxar/mueblesstgo ."
-                sh "docker push danaxar/mueblesstgo"
-                // Ya se tiene la aplicación en dockerhub
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Danaxar/mtisw_MueblesStgo']]])
+                bat 'mvn clean install -DskipTests'
             }
         }
-        stage('Test') {
+        stage('Testing') {
             steps {
-                //
+                bat 'mvn test'
             }
         }
-        stage('Deploy') {
+        stage('Build Docker Image'){
             steps {
-                // Terraform
-                sh "terraform init"
-                sh ""
+                bat 'docker build -t danaxar/mueblesstgo .'
+            }
+        }
+        stage('Push Docker Image'){
+            steps {
+                withCredentials([string(credentialsId: 'dckrhbpassword', variable: 'dockerpassword2')]) {
+                    bat 'docker login -u danaxar -p %dockerpassword2%'
+                }
+                bat 'docker push danaxar/mueblesstgo'
             }
         }
     }
+    post {
+    		always {
+    			bat 'docker logout'
+    		}
+    	}
 }
